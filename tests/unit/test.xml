@@ -1,0 +1,37 @@
+<mxfile host="drawio-plugin" version="20.5.3" type="embed" modified="2023-07-12T22:58:17.826Z"
+        agent="5.0 (Macintosh; Intel Mac OS X 12_0_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36"
+        etag="MRPZM84XNlerVt0PT8O2">
+    <diagram id="blabetiblou" name="Page-1">
+        <mxGraphModel dx="535" dy="212" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1"
+                      page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="blabetiblou"
+                        style="rounded=1;whiteSpace=wrap;html=1;arcSize=5;align=left;verticalAlign=top;" vertex="1"
+                        parent="1">
+                    <mxGeometry x="200" y="100" width="100" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="bonjour"
+                        style="endArrow=classic;html=1;curved=1;strokeWidth=4;strokeColor=$#FF000;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="20" y="50" as="sourcePoint"/>
+                        <mxPoint x="200" y="100" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="200" y="50"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="blabetiblou" name="Page-2">
+        <mxGraphModel dx="535" dy="212" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1"
+                      page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

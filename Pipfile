@@ -7,6 +7,7 @@ name = "pypi"
 python-drawio = {path = "."}
 
 [dev-packages]
+gitpython = "*"
 
 [requires]
 python_version = "3.11"

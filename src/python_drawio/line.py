@@ -1,12 +1,20 @@
+import enum
 from xml.etree.ElementTree import Element, SubElement, tostring
+from typing import Union
 
 from .content import Content
 
 
+class LineStrokeStyle(enum.Enum):
+    SOLID = 'solid'
+    DASHED = 'dashed'
+    DOTTED = 'dotted'
+
+
 class Line(Content):
 
-    def __init__(self, points: list[[int, int]],
-                 stroke_thickness: int = 1, stroke_color: str = "#000000",
+    def __init__(self, points: list[Union[list[int], Content]],
+                 stroke_thickness: int = 1, stroke_color: str = "#000000", stroke_style: LineStrokeStyle = LineStrokeStyle.SOLID,
                  rounded: bool = False, curved: bool = False,
                  content: str = "",
                  end_arrow: str = "classic"):
@@ -15,6 +23,7 @@ class Line(Content):
         self.points: list[[int, int]] = points
         self.stroke_thickness = stroke_thickness
         self.stroke_color = stroke_color
+        self.stroke_style: LineStrokeStyle = stroke_style
         self.content = content
         self.rounded = rounded
         self.curved = curved
@@ -23,13 +32,35 @@ class Line(Content):
     def to_xml(self):
         # TODO deal with None id
         # TODO parent id
-        cell = Element("mxCell", attrib={
+        cell_style = {
+            'html': 1,
+            "strokeWidth": self.stroke_thickness,
+            "strokeColor": self.stroke_color,
+        }
+        if self.end_arrow is not None:
+            cell_style['end_arrow'] = self.end_arrow
+        if self.stroke_style == LineStrokeStyle.DASHED:
+            cell_style['dashed'] = 1
+        if self.curved:
+            cell_style['curved'] = 1
+        elif self.rounded:
+            cell_style['rounded'] = 1
+        else:
+            cell_style['rounded'] = 0
+
+        cell_attrib = {
             "id": str(self.id),
             "value": self.content,
-            "style": f"endArrow={self.end_arrow};html=1;{'curved' if self.curved else 'rounded'}={1 if self.rounded or self.curved else 0};strokeWidth={self.stroke_thickness};strokeColor={self.stroke_color};",
+            "style": ";".join([f"{key}={val}" for (key, val) in cell_style.items()]),
             "edge": "1",
             "parent": "1",
-        })
+        }
+        if isinstance(self.points[0], Content):
+            cell_attrib['source'] = self.points[0].id
+        if isinstance(self.points[len(self.points) - 1], Content):
+            cell_attrib['target'] = self.points[len(self.points) - 1].id
+
+        cell = Element("mxCell", attrib=cell_attrib)
 
         geometry_attrib = {
             "width": str("50"),
@@ -40,17 +71,19 @@ class Line(Content):
 
         geometry = SubElement(cell, "mxGeometry", attrib=geometry_attrib)
 
-        SubElement(geometry, "mxPoint", attrib={
-            "x": str(self.points[0][0]),
-            "y": str(self.points[0][1]),
-            "as": "sourcePoint",
-        })
+        if not isinstance(self.points[0], Content):
+            SubElement(geometry, "mxPoint", attrib={
+                "x": str(self.points[0][0]),
+                "y": str(self.points[0][1]),
+                "as": "sourcePoint",
+            })
 
-        SubElement(geometry, "mxPoint", attrib={
-            "x": str(self.points[len(self.points) - 1][0]),
-            "y": str(self.points[len(self.points) - 1][1]),
-            "as": "targetPoint",
-        })
+        if not isinstance(self.points[len(self.points) - 1], Content):
+            SubElement(geometry, "mxPoint", attrib={
+                "x": str(self.points[len(self.points) - 1][0]),
+                "y": str(self.points[len(self.points) - 1][1]),
+                "as": "targetPoint",
+            })
 
         if len(self.points) > 2:
             array = SubElement(geometry, "Array", attrib={

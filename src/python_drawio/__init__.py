@@ -1,6 +1,6 @@
 from xml.etree.ElementTree import Element, SubElement, tostring
 
-from .line import Line
+from .line import Line, LineStrokeStyle
 from .rectangle import RoundedRectangle
 
 

@@ -1,5 +1,5 @@
 import enum
-from xml.etree.ElementTree import Element, SubElement, tostring
+from xml.etree.ElementTree import Element, SubElement
 from typing import Union
 
 from .content import Content
@@ -14,7 +14,8 @@ class LineStrokeStyle(enum.Enum):
 class Line(Content):
 
     def __init__(self, points: list[Union[list[int], Content]],
-                 stroke_thickness: int = 1, stroke_color: str = "#000000", stroke_style: LineStrokeStyle = LineStrokeStyle.SOLID,
+                 stroke_thickness: int = 1, stroke_color: str = "#000000",
+                 stroke_style: LineStrokeStyle = LineStrokeStyle.SOLID,
                  rounded: bool = False, curved: bool = False,
                  content: str = "",
                  end_arrow: str = "classic"):

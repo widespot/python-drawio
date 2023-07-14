@@ -1,9 +1,9 @@
-from xml.etree.ElementTree import Element, SubElement
+from xml.etree.ElementTree import Element as XmlElement, SubElement
 
-from .content import Content
+from .element import Element
 
 
-class RoundedRectangle(Content):
+class RoundedRectangle(Element):
     def __init__(self, x: int, y: int, width: int, height: int, border_width: int = 1, arc_size: int = 5,
                  content: str = "", text_align: str = "center", text_valign: str = "middle"):
         super().__init__()
@@ -20,7 +20,7 @@ class RoundedRectangle(Content):
 
     def to_xml(self):
         # TODO deal with None id
-        cell = Element("mxCell", attrib={
+        cell = XmlElement("mxCell", attrib={
             "id": str(self.id),
             "value": self.content,
             "style": f"rounded={1 if self.rounded else 0};whiteSpace=wrap;html=1;arcSize={self.arc_size};align={self.text_align};verticalAlign={self.text_valign};",

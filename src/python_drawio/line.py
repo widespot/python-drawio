@@ -1,8 +1,8 @@
 import enum
-from xml.etree.ElementTree import Element, SubElement
+from xml.etree.ElementTree import Element as XmlElement, SubElement
 from typing import Union
 
-from .content import Content
+from .element import Element
 
 
 class LineStrokeStyle(enum.Enum):
@@ -11,9 +11,9 @@ class LineStrokeStyle(enum.Enum):
     DOTTED = 'dotted'
 
 
-class Line(Content):
+class Line(Element):
 
-    def __init__(self, points: list[Union[list[int], Content]],
+    def __init__(self, points: list[Union[list[int], Element]],
                  stroke_thickness: int = 1, stroke_color: str = "#000000",
                  stroke_style: LineStrokeStyle = LineStrokeStyle.SOLID,
                  rounded: bool = False, curved: bool = False,
@@ -56,12 +56,12 @@ class Line(Content):
             "edge": "1",
             "parent": "1",
         }
-        if isinstance(self.points[0], Content):
+        if isinstance(self.points[0], Element):
             cell_attrib['source'] = self.points[0].id
-        if isinstance(self.points[len(self.points) - 1], Content):
+        if isinstance(self.points[len(self.points) - 1], Element):
             cell_attrib['target'] = self.points[len(self.points) - 1].id
 
-        cell = Element("mxCell", attrib=cell_attrib)
+        cell = XmlElement("mxCell", attrib=cell_attrib)
 
         geometry_attrib = {
             "width": str("50"),
@@ -72,14 +72,14 @@ class Line(Content):
 
         geometry = SubElement(cell, "mxGeometry", attrib=geometry_attrib)
 
-        if not isinstance(self.points[0], Content):
+        if not isinstance(self.points[0], Element):
             SubElement(geometry, "mxPoint", attrib={
                 "x": str(self.points[0][0]),
                 "y": str(self.points[0][1]),
                 "as": "sourcePoint",
             })
 
-        if not isinstance(self.points[len(self.points) - 1], Content):
+        if not isinstance(self.points[len(self.points) - 1], Element):
             SubElement(geometry, "mxPoint", attrib={
                 "x": str(self.points[len(self.points) - 1][0]),
                 "y": str(self.points[len(self.points) - 1][1]),

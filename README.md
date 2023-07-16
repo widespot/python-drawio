@@ -1,6 +1,6 @@
 # 🚧 WIP draw.io using Python
 
-```python
+```
 d = Document()
 p1 = Page("Page-1")
 p2 = Page("Page-2")

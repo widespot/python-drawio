@@ -3,6 +3,8 @@ from xml.etree.ElementTree import tostring
 
 from python_drawio import Page, Document, RoundedRectangle, Line, LineStrokeStyle
 
+from .test_line import TestLine
+
 
 class TestContext(unittest.TestCase):
 
@@ -26,9 +28,9 @@ class TestContext(unittest.TestCase):
         )
         p1.add_content(r2)
         p1.add_content(Line(points=[
-            [20, 50],
-            [200, 50],
-            [200, 100],
+            (20, 50),
+            (200, 50),
+            (200, 100),
         ], stroke_thickness=4, stroke_color="#FF0000", stroke_style=LineStrokeStyle.DASHED,
             content="bonjour", curved=True))
         p1.add_content(Line(points=[

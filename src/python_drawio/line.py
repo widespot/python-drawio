@@ -13,7 +13,7 @@ class LineStrokeStyle(enum.Enum):
 
 class Line(Element):
 
-    def __init__(self, points: list[Union[list[int], Element]],
+    def __init__(self, points: list[Union[tuple[int, int], Element, tuple[Element, int, int]]],
                  stroke_thickness: int = 1, stroke_color: str = "#000000",
                  stroke_style: LineStrokeStyle = LineStrokeStyle.SOLID,
                  rounded: bool = False, curved: bool = False,
@@ -52,14 +52,23 @@ class Line(Element):
         cell_attrib = {
             "id": str(self.id),
             "value": self.content,
-            "style": ";".join([f"{key}={val}" for (key, val) in cell_style.items()]),
             "edge": "1",
             "parent": "1",
         }
-        if isinstance(self.points[0], Element):
-            cell_attrib['source'] = self.points[0].id
-        if isinstance(self.points[len(self.points) - 1], Element):
-            cell_attrib['target'] = self.points[len(self.points) - 1].id
+        source_point = self.points[0]
+        target_point = self.points[len(self.points) - 1]
+        if isinstance(source_point, Element) or len(source_point) == 3:
+            element = source_point if isinstance(source_point, Element) else source_point[0]
+            cell_attrib['source'] = element.id
+            if not isinstance(source_point, Element):
+                cell_style.update(exitX=str(source_point[1]), exitY=str(source_point[2]), exitDx="0", exitDy="0")
+        if isinstance(target_point, Element) or len(target_point) == 3:
+            element = target_point if isinstance(target_point, Element) else target_point[0]
+            cell_attrib['target'] = element.id
+            if not isinstance(target_point, Element):
+                cell_style.update(entryX=str(target_point[1]), entryY=str(target_point[2]), entryDx="0", entryDy="0")
+
+        cell_attrib['style'] = ";".join([f"{key}={val}" for (key, val) in cell_style.items()])
 
         cell = XmlElement("mxCell", attrib=cell_attrib)
 
@@ -72,17 +81,17 @@ class Line(Element):
 
         geometry = SubElement(cell, "mxGeometry", attrib=geometry_attrib)
 
-        if not isinstance(self.points[0], Element):
+        if not isinstance(source_point, Element) and len(source_point) == 2:
             SubElement(geometry, "mxPoint", attrib={
-                "x": str(self.points[0][0]),
-                "y": str(self.points[0][1]),
+                "x": str(source_point[0]),
+                "y": str(source_point[1]),
                 "as": "sourcePoint",
             })
 
-        if not isinstance(self.points[len(self.points) - 1], Element):
+        if not isinstance(target_point, Element) and len(target_point) == 2:
             SubElement(geometry, "mxPoint", attrib={
-                "x": str(self.points[len(self.points) - 1][0]),
-                "y": str(self.points[len(self.points) - 1][1]),
+                "x": str(target_point[0]),
+                "y": str(target_point[1]),
                 "as": "targetPoint",
             })
 

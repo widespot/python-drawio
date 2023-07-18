@@ -13,6 +13,37 @@ class LineStrokeStyle(enum.Enum):
 
 class Line(Element):
 
+    def get_y(self) -> int:
+        return self.get_min_y()
+
+    def get_x(self) -> int:
+        return self.get_min_x()
+
+    def get_min_x(self) -> int:
+        return self.get_min_points(0)
+
+    def get_min_y(self) -> int:
+        return self.get_min_points(1)
+
+    def get_min_points(self, i) -> int:
+        return self.get_minmax_points(min, i)
+
+    def get_max_points(self, i) -> int:
+        return self.get_minmax_points(max, i)
+
+    def get_minmax_points(self, fun, i):
+        return fun(
+            list(filter(lambda p: not isinstance(p, Element) and len(p) == 2,
+                        self.points)),
+            default=(0, 0),
+            key=lambda p: p[i])[i]
+
+    def get_width(self) -> int:
+        return self.get_max_points(0) - self.get_min_points(0)
+
+    def get_height(self) -> int:
+        return self.get_max_points(1) - self.get_min_points(1)
+
     def __init__(self, points: list[Union[tuple[int, int], Element, tuple[Element, int, int]]],
                  stroke_thickness: int = 1, stroke_color: str = "#000000",
                  stroke_style: LineStrokeStyle = LineStrokeStyle.SOLID,
@@ -30,9 +61,8 @@ class Line(Element):
         self.curved = curved
         self.end_arrow = end_arrow
 
-    def to_xml(self):
+    def to_xml(self, parent_id: str = "1") -> list[XmlElement]:
         # TODO deal with None id
-        # TODO parent id
         cell_style = {
             'html': 1,
             "strokeWidth": self.stroke_thickness,
@@ -53,7 +83,7 @@ class Line(Element):
             "id": str(self.id),
             "value": self.content,
             "edge": "1",
-            "parent": "1",
+            "parent": parent_id,
         }
         source_point = self.points[0]
         target_point = self.points[len(self.points) - 1]
@@ -66,7 +96,8 @@ class Line(Element):
             element = target_point if isinstance(target_point, Element) else target_point[0]
             cell_attrib['target'] = element.id
             if not isinstance(target_point, Element):
-                cell_style.update(entryX=str(target_point[1]), entryY=str(target_point[2]), entryDx="0", entryDy="0")
+                cell_style.update(entryX=str(target_point[1]), entryY=str(target_point[2]), entryDx="0",
+                                  entryDy="0")
 
         cell_attrib['style'] = ";".join([f"{key}={val}" for (key, val) in cell_style.items()])
 
@@ -105,4 +136,4 @@ class Line(Element):
                     "y": str(p[1]),
                 })
 
-        return cell
+        return [cell]

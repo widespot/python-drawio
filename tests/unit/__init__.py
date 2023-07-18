@@ -4,6 +4,8 @@ from xml.etree.ElementTree import tostring
 from python_drawio import Page, Document, RoundedRectangle, Line, LineStrokeStyle
 
 from .test_line import TestLine
+from .test_group import TestGroup
+from .test_rectangle import TestRectangle
 
 
 class TestContext(unittest.TestCase):

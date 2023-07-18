@@ -1,7 +1,9 @@
-from xml.etree.ElementTree import Element, SubElement, tostring
+from xml.etree.ElementTree import Element as XmlElement, SubElement
 
 from .line import Line, LineStrokeStyle
 from .rectangle import RoundedRectangle
+from .group import Group
+from .element import Element
 
 
 class Document:
@@ -14,8 +16,8 @@ class Document:
     def add_page(self, page):
         self.pages += [page]
 
-    def to_xml(self) -> Element:
-        root = Element('mxfile', attrib={
+    def to_xml(self) -> XmlElement:
+        root = XmlElement('mxfile', attrib={
             'host': self.host,
             "version": self.version,
             "type": self.type,
@@ -38,12 +40,13 @@ class Page:
         self.count = 0
 
     def add_content(self, content):
-        content.set_id(self.count + 2)
-        self.count += 1
+        # +2 because each root always start with two mxCells taking id 0 and 1
+        added_elements = content.set_id(self.count + 2)
+        self.count += added_elements
         self.content += [content]
 
     def to_xml(self):
-        page = Element("diagram", attrib={
+        page = XmlElement("diagram", attrib={
             "id": "blabetiblou",
             "name": self.title,
         })
@@ -71,7 +74,9 @@ class Page:
         SubElement(root, "mxCell", attrib={"id": "0"})
         SubElement(root, "mxCell", attrib={"id": "1", "parent": "0"})
 
+        content: Element
         for content in self.content:
-            root.append(content.to_xml())
+            for xml_element in content.to_xml(parent_id="1"):
+                root.append(xml_element)
 
         return page

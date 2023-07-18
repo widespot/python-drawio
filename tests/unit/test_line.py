@@ -11,6 +11,15 @@ class TestLine(unittest.TestCase):
     def setUp(self) -> None:
         os.makedirs(TestLine.output_dir, exist_ok=True)
 
+    def test_width_points(self):
+        m = Line(points=[
+            (-1, 12),
+            (3, 14),
+            (1, 11),
+        ])
+
+        self.assertEqual(m.get_width(), 4)
+
     def test_connection(self):
         d = Document()
         p = Page("page")
